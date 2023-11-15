@@ -38,9 +38,12 @@ public class ExampleScript : MonoBehaviour
 
         AngelARUI.Instance.InitManual(allJsonTasks);
 
-        yield return new WaitForSeconds(2f);
+        AngelARUI.Instance.SetOrbThinking(true);
 
-        AngelARUI.Instance.PlayMessageAtOrb("This is a test of a very long text. I am just going to continue talking until somebody says stop or if I am getting interrupted by another incoming message. I enjoy helping people, so ask me any question you want about the tasks.");
+        yield return new WaitForSeconds(4f);
+
+        AngelARUI.Instance.PlayMessageAtOrb
+            ("What is this in front of me?", "A grinder.");
 
         yield return new WaitForSeconds(5f);
 

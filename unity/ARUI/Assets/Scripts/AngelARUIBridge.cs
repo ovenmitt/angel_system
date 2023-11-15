@@ -79,12 +79,28 @@ public class AngelARUIBridge : MonoBehaviour
     {
         // Update task status
         AngelARUI.Instance.SetCurrentObservedTask(msg.task_update.task_name);
-        AngelARUI.Instance.GoToStep(msg.task_update.task_name, msg.task_update.current_step_id);
+
+        // NOTE: There is a current mismatch between the task lists used by the ARUI
+        // and the task monitor. The ARUI does not have a concept of a background step
+        // at step 0, so step_id = 0 is not the same between the task monitor and the ARUI.
+        // Hence, the logic here to set the ARUI to go to step_id + 1.
+        if (msg.task_update.current_step_id == 0 && (msg.task_update.current_step == "background"))
+        {
+            // Handle special case going back to background
+            AngelARUI.Instance.GoToStep(msg.task_update.task_name, msg.task_update.current_step_id);
+        }
+        else
+        {
+            AngelARUI.Instance.GoToStep(msg.task_update.task_name, msg.task_update.current_step_id + 1);
+        }
 
         // Handle user notifications
         for (int i = 0; i < msg.notifications.Length; i++)
         {
-            AngelARUI.Instance.PlayMessageAtOrb(msg.notifications[i].description);
+            if (msg.notifications[i].description!=null && msg.notifications[i].description.Length== 0)
+                AngelARUI.Instance.SetOrbThinking(true);
+            else
+                AngelARUI.Instance.PlayMessageAtOrb(msg.notifications[i].title, msg.notifications[i].description);
         }
     }
 

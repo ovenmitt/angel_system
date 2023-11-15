@@ -32,6 +32,7 @@ public class Orb : Singleton<Orb>
     private bool _lazyLookAtRunning = false;                 /// <used for lazy look at disable
     private bool _lazyFollowStarted = false;                 /// <used for lazy following
 
+    private GPTDialogue _dialogue;
     /// <summary>
     /// Get all orb references from prefab
     /// </summary>
@@ -50,6 +51,11 @@ public class Orb : Singleton<Orb>
         _grabbable = gameObject.GetComponentInChildren<OrbGrabbable>();
 
         BoxCollider taskListBtnCol = transform.GetChild(0).GetComponent<BoxCollider>();
+
+        _dialogue = transform.GetChild(0).GetChild(2).gameObject.AddComponent<GPTDialogue>();
+        _dialogue.Init();
+        _dialogue.SetText("", "");
+        _dialogue.gameObject.SetActive(false);
 
         // Collect all orb colliders
         _allOrbColliders = new List<BoxCollider>();
@@ -282,6 +288,24 @@ public class Orb : Singleton<Orb>
     private void HandleUpdateActiveStepEvent()
     {
         SetTaskMessage(DataProvider.Instance.CurrentSelectedTasks);
+    }
+
+    public void SetOrbThinking(bool isThinking)
+    {
+        if (isThinking)
+            _face.SetOrbState(OrbStates.Loading);
+        else
+            _face.SetOrbState(OrbStates.Idle);
+    }
+
+    public void SetDialogueActive(bool isActive)
+    {
+        _dialogue.gameObject.SetActive(isActive);
+    }
+
+    public void SetDialogueText(string utterance, string answer)
+    {
+        _dialogue.SetText(utterance, answer);   
     }
 
     #endregion

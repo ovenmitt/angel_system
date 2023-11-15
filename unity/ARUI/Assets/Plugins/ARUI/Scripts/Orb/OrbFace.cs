@@ -167,17 +167,14 @@ public class OrbFace : MonoBehaviour
         if (newState.Equals(OrbStates.Loading) &&
             _currentFaceState!= OrbStates.Loading)
         {
-            _face.Type = Shapes.DiscType.Arc;
+            _currentFaceState = OrbStates.Loading;
             StartCoroutine(Rotating());
 
         } else if (newState.Equals(OrbStates.Idle) &&
             _currentFaceState != OrbStates.Idle)
         {
-            _face.Type = Shapes.DiscType.Ring;
-            StopCoroutine(Rotating());
+            _currentFaceState = OrbStates.Idle;
         }
-
-        _currentFaceState = newState;
     }
 
     /// <summary>
@@ -186,10 +183,16 @@ public class OrbFace : MonoBehaviour
     /// <returns></returns>
     private IEnumerator Rotating()
     {
+        _face.Type = Shapes.DiscType.Arc;
+        _mouth.Type = Shapes.DiscType.Arc;
         while (_currentFaceState == OrbStates.Loading)
         {
-            _face.transform.Rotate(new Vector3(0,0,20f),Space.Self);
+            _face.transform.Rotate(new Vector3(0, 0, 20f), Space.Self);
+            _mouth.transform.Rotate(new Vector3(0, 0, 15f), Space.Self);
             yield return new WaitForEndOfFrame();
         }
+
+        _mouth.Type = Shapes.DiscType.Ring;
+        _face.Type = Shapes.DiscType.Ring;
     }
 }
